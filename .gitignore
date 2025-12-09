@@ -1,0 +1,56 @@
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# Angular build
+/angular/dist
+/angular/tmp
+/angular/out-tsc
+/.angular/cache
+
+# React Native / Expo
+/react-native-expo/.expo/
+react-native-expo/dist/
+web-build/
+.ios/
+.android/
+.expo/
+.expo-env.d.ts
+.metro-health-check*
+
+# IDEs
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Logs & misc
+*-debug.log
+coverage/
+__screenshots__/
+testem.log
+
+# System
+.DS_Store
+Thumbs.db
+.env
+.env*.local
+
+# Firebase
+.firebase
+.runtimeconfig.json
+
+# Keys & credentials
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+
+# TypeScript
+*.tsbuildinfo
