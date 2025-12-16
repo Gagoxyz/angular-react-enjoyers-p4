@@ -43,7 +43,8 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,
@@ -80,7 +81,9 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/firebase-messaging-sw.js",
+              "src/manifest.webmanifest"
             ],
             "styles": [
               "src/styles.css"
