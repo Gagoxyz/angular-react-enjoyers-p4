@@ -16,13 +16,10 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Notificación en background:', payload);
-  
-  // Personalizamos la notificación del navegador
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: '/assets/icons/icon-72x72.png', // Usamos uno de los iconos que generó el comando PWA
-    data: payload.data
+    icon: '/assets/logo.png' // Asegúrate de que esta ruta exista
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);

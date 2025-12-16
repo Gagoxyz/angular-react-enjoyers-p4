@@ -1,32 +1,62 @@
 /**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
+ * Importamos los disparadores: Created (Crear) y Updated (Actualizar)
  */
+const { onDocumentCreated, onDocumentUpdated } = require("firebase-functions/v2/firestore");
+const admin = require("firebase-admin");
 
-const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/https");
-const logger = require("firebase-functions/logger");
+// Inicializamos admin una sola vez
+admin.initializeApp();
 
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
+// --- 1. Trigger al CREAR (Ya lo tenías) ---
+exports.onCreatePlayer = onDocumentCreated("players/{playerId}", async (event) => {
+    const snapshot = event.data;
+    if (!snapshot) return;
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+    const playerData = snapshot.data();
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+    const message = {
+        notification: {
+            title: "¡Nuevo Fichaje! ⚽",
+            body: `${playerData.name} se ha unido al equipo como ${playerData.position}.`
+        },
+        topic: "updates"
+    };
+
+    try {
+        await admin.messaging().send(message);
+        console.log("Notificación de creación enviada.");
+    } catch (error) {
+        console.error("Error enviando notificación:", error);
+    }
+});
+
+// --- 2. Trigger al ACTUALIZAR (Nuevo) ---
+exports.onUpdatePlayer = onDocumentUpdated("players/{playerId}", async (event) => {
+    // En Update, event.data es un objeto con 'before' y 'after'
+    const change = event.data;
+
+    const nuevoDato = change.after.data();
+    const viejoDato = change.before.data();
+
+    // Verificamos si cambió la posición (para no notificar por cualquier cosa)
+    // Si la posición vieja es igual a la nueva, no hacemos nada.
+    if (viejoDato.position === nuevoDato.position) {
+        console.log("La posición no cambió, no se envía notificación.");
+        return; 
+    }
+
+    const message = {
+        notification: {
+            title: "¡Cambio de Táctica! 🔄",
+            body: `${nuevoDato.name} ahora juega de ${nuevoDato.position} (antes ${viejoDato.position}).`
+        },
+        topic: "updates"
+    };
+
+    try {
+        await admin.messaging().send(message);
+        console.log("Notificación de actualización enviada para:", nuevoDato.name);
+    } catch (error) {
+        console.error("Error enviando actualización:", error);
+    }
+});
