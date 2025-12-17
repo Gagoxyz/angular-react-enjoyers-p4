@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "87430062589",
+    "project_id": "angular-react-enjoyers-p2",
+    "storage_bucket": "angular-react-enjoyers-p2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87430062589:android:28c651ef436438ff673994",
+        "android_client_info": {
+          "package_name": "com.dgagoc.equipobasket"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnKbuF1RU0BhlAXX7BphHkEMvZOXKqrEs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87430062589:android:c06cc37fa86ea25e673994",
+        "android_client_info": {
+          "package_name": "com.hamza.equipobasket"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnKbuF1RU0BhlAXX7BphHkEMvZOXKqrEs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

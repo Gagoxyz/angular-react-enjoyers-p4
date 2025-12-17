@@ -10,8 +10,11 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
+    "@react-native-firebase/app": "^23.7.0",
+    "@react-native-firebase/messaging": "^23.7.0",
     "expo": "~54.0.25",
     "expo-constants": "~18.0.10",
+    "expo-dev-client": "~6.0.20",
     "expo-router": "~6.0.15",
     "expo-status-bar": "~3.0.8",
     "firebase": "^12.6.0",

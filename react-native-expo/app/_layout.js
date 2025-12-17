@@ -1,9 +1,12 @@
 import { Stack, Link, useRouter, useSegments } from "expo-router";
 import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
-import { Image, ImageBackground, StyleSheet, View, Pressable } from "react-native";
-import { images } from "../assets/images/images";
+import { Image, ImageBackground, StyleSheet, View, Pressable, Alert } from "react-native";
+import { useEffect } from "react";
 
-import Ionicons from '@expo/vector-icons/Ionicons';
+import Ionicons from "@expo/vector-icons/Ionicons";
+import messaging from "@react-native-firebase/messaging";
+
+import { images } from "../assets/images/images";
 
 
 function CustomHeader() {
@@ -12,14 +15,15 @@ function CustomHeader() {
   const segments = useSegments();
 
   const isHome = segments.length === 0 || segments[0] === "";
-  // en expo-router "/" => segments = []
 
   return (
     <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
       <Image source={images.logo} style={styles.logo} />
 
-      <Link href={"/"} style={styles.title}>Equipo Basket</Link>
-      {/* Botón de retroceso solo cuando NO estás en la Home */}
+      <Link href={"/"} style={styles.title}>
+        Equipo Basket
+      </Link>
+
       {!isHome && (
         <Pressable onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back-circle-sharp" size={40} color="white" />
@@ -30,6 +34,71 @@ function CustomHeader() {
 }
 
 export default function Layout() {
+
+  /* ---- Pedir permisos de notificaciones ---- */
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log("Notification permission granted:", authStatus);
+    }
+  };
+
+  useEffect(() => {
+    const initNotifications = async () => {
+      // 1️⃣ Pedir permisos
+      await requestUserPermission();
+
+      // 2️⃣ Obtener token FCM
+      const token = await messaging().getToken();
+      console.log("FCM Token:", token);
+
+      // 3️⃣ Suscribirse al topic
+      await messaging().subscribeToTopic("players");
+      console.log("Subscribed to topic: players");
+    };
+
+    initNotifications();
+
+    /* ---- App abierta desde notificación (cerrada) ---- */
+    messaging()
+      .getInitialNotification()
+      .then((remoteMessage) => {
+        if (remoteMessage) {
+          console.log(
+            "Opened app from quit state:",
+            remoteMessage.notification
+          );
+        }
+      });
+
+    /* ---- App en background y se abre ---- */
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log(
+        "Opened app from background:",
+        remoteMessage.notification
+      );
+    });
+
+    /* ---- Mensajes en background ---- */
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      console.log("Message handled in background:", remoteMessage);
+    });
+
+    /* ---- Mensajes en foreground ---- */
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      Alert.alert(
+        remoteMessage.notification?.title || "Nueva notificación",
+        remoteMessage.notification?.body || ""
+      );
+    });
+
+    return unsubscribe;
+  }, []);
+
   return (
     <ImageBackground
       source={images.background}

@@ -17,17 +17,25 @@
       "supportsTablet": true
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.dgagoc.equipobasket"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "7590a676-b800-4858-ab19-104de173161f"
+      }
+    }
   }
 }
