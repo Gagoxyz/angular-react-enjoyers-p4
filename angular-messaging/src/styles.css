@@ -1,0 +1,99 @@
+/* ---------- Variables ---------- */
+:root {
+    --color-primario: #E44D26;
+    /* Naranja/rojo Angular */
+    --color-secundario: #0A7EA4;
+    /* Azul React */
+    --color-fondo-oscuro: #0F2537;
+    /* Fondo oscuro general */
+    --color-texto: #FFFFFF;
+    /* Blanco para contraste */
+    --color-hover: #F4B042;
+    /* Naranja claro / highlights */
+}
+
+/* ---------- Reset / Body ---------- */
+body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    background-color: var(--color-fondo-oscuro);
+    color: var(--color-texto);
+}
+
+/* ---------- Header ---------- */
+.header {
+    background-color: var(--color-primario);
+    padding: 20px 0;
+    text-align: center;
+    color: var(--color-texto);
+}
+
+.header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header .logo {
+    height: 150px;
+    margin-bottom: 10px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* ---------- Main ---------- */
+.main-content {
+    display: flex;
+    justify-content: center;
+    padding: 50px 20px;
+}
+
+/* ---------- Card ---------- */
+.card {
+    background-color: var(--color-secundario);
+    border: 3px solid var(--color-primario);
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+.card h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--color-texto);
+}
+
+.card p {
+    color: var(--color-texto);
+    line-height: 1.5;
+}
+
+/* ---------- Buttons ---------- */
+.actions {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn {
+    background-color: var(--color-primario);
+    color: var(--color-texto);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    background-color: var(--color-hover);
+    color: var(--color-fondo-oscuro);
+}

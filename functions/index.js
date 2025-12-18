@@ -1,32 +1,82 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
 
-const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/https");
+const { setGlobalOptions } = require("firebase-functions");
+const { onDocumentCreated, onDocumentUpdated } = require("firebase-functions/v2/firestore");
+const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
+const { onRequest } = require("firebase-functions/v2/https");
+
+// Inicializar Admin
+admin.initializeApp();
+
+// Control de contenedores
 setGlobalOptions({ maxInstances: 10 });
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+const cors = require("cors")({ origin: true });
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+/* --- Nuevo jugador --- */
+exports.onPlayerCreated = onDocumentCreated("players/{playerId}", async (event) => {
+    const player = event.data.data();
+    logger.info("Nuevo jugador creado", player);
+
+    await admin.messaging().send({
+        notification: {
+            title: "🆕 Nuevo jugador",
+            body: `Se ha añadido ${player.nombre} ${player.apellidos}`
+        },
+        topic: "players"
+    });
+});
+
+/* --- Jugador modificado --- */
+exports.onPlayerUpdated = onDocumentUpdated("players/{playerId}", async (event) => {
+    const after = event.data.after.data();
+    logger.info("Jugador actualizado", after);
+
+    await admin.messaging().send({
+        notification: {
+            title: "✏ Jugador actualizado",
+            body: `Se ha actualizado ${after.nombre} ${after.apellidos}`
+        },
+        topic: "players"
+    });
+});
+
+/* --- Suscribir angular-messaging a "players" */
+exports.subscribeToPlayers = onRequest((req, res) => {
+    cors(req, res, async () => {
+        const { token } = req.body;
+
+        if (!token) {
+            res.status(400).send("Token requerido");
+            return;
+        }
+
+        try {
+            await admin.messaging().subscribeToTopic(token, "players");
+            res.status(200).send("Suscrito al topic players");
+        } catch (error) {
+            console.error(error);
+            res.status(500).send("Error al suscribir");
+        }
+    });
+});
+
+exports.unsubscribeFromPlayers = onRequest((req, res) => {
+    cors(req, res, async () => {
+        const { token } = req.body;
+
+        if (!token) {
+            res.status(400).send("Token requerido");
+            return;
+        }
+
+        try {
+            await admin.messaging().unsubscribeFromTopic(token, "players");
+            res.status(200).send("Desuscrito del topic players");
+        } catch (error) {
+            console.error(error);
+            res.status(500).send("Error al desuscribir");
+        }
+    });
+});

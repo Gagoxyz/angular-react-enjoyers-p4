@@ -1,0 +1,23 @@
+<header class="header">
+  <div class="header-content">
+    <img src="assets/logo.png" alt="Logo" class="logo" />
+    <h1>EQUIPO BASKET</h1>
+  </div>
+</header>
+
+<main class="main-content">
+  <div class="card">
+    <h2>Notificaciones Push</h2>
+    <p>
+      Activa o desactiva las notificaciones para recibir avisos cuando se
+      añadan o modifiquen jugadores del equipo.
+    </p>
+
+    <div class="actions">
+      <button class="btn" (click)="enableNotifications()">Activar</button>
+      <button class="btn" (click)="disableNotifications()">Desactivar</button>
+    </div>
+  </div>
+</main>
+
+<router-outlet />
