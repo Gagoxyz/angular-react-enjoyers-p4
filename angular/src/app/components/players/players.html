@@ -37,7 +37,7 @@
 
           <!-- Imagen del jugador -->
           <div class="ratio ratio-1x1 overflow-hidden">
-            <img [src]="player.multimedia[0]" class="card-img-top img-fluid player-img" alt="{{ player.nombre }}" />
+            <img [src]="player.multimedia?.[0]" class="card-img-top img-fluid player-img" alt="{{ player.nombre }}" />
           </div>
 
           <!-- Nombre del jugador + Botón eliminar -->
