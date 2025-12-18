@@ -1,32 +1,35 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+const { onDocumentCreated } = require("firebase-functions/v2/firestore");
+const admin = require("firebase-admin");
 
-const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/https");
-const logger = require("firebase-functions/logger");
+admin.initializeApp();
 
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
+// Esta función se dispara cada vez que se crea un documento en la colección "players"
+exports.notifyNewPlayer = onDocumentCreated("players/{playerId}", async (event) => {
+    const newPlayer = event.data.data(); // Datos del jugador recién creado
+    const payload = {
+        notification: {
+            title: "¡Nuevo jugador fichado!",
+            body: `${newPlayer.nombre} ${newPlayer.apellidos} se ha unido al equipo.`,
+            icon: "https://tu-url-de-logo.png", // Usa una URL pública de tu logo
+        }
+    };
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+    try {
+        // 1. Obtenemos todos los tokens guardados en la colección fcm_tokens
+        const tokensSnapshot = await admin.firestore().collection("fcm_tokens").get();
+        const tokens = tokensSnapshot.docs.map(doc => doc.data().token);
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+        if (tokens.length > 0) {
+            // 2. Enviamos la notificación a todos los tokens encontrados
+            const response = await admin.messaging().sendEachForMulticast({
+                tokens: tokens,
+                notification: payload.notification,
+            });
+            console.log(`Notificaciones enviadas con éxito: ${response.successCount}`);
+        } else {
+            console.log("No hay tokens registrados para notificar.");
+        }
+    } catch (error) {
+        console.error("Error enviando notificaciones:", error);
+    }
+});

@@ -23,7 +23,7 @@
                 "glob": "**/*",
                 "input": "public"
               },
-              "src/public/firebase-messaging-sw.js"
+              "src/firebase-messaging-sw.js"
             ],
             "styles": [
               "src/favicon.ico",
