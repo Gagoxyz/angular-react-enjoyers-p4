@@ -22,12 +22,13 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/public/firebase-messaging-sw.js"
             ],
             "styles": [
               "src/favicon.ico",
               "src/assets",
-              "src/public/firebase-messaging-sw.js"
+              "src/assets"
             ]
           },
           "configurations": {
