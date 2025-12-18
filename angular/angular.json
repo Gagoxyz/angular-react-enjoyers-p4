@@ -26,9 +26,10 @@
               "src/firebase-messaging-sw.js"
             ],
             "styles": [
-              "src/favicon.ico",
-              "src/assets"
-            ]
+              "src/custom-theme.scss",
+              "src/styles.css"
+          ],
+            "scripts": []
           },
           "configurations": {
             "production": {

@@ -1,20 +1,25 @@
-import { Component, OnInit } from '@angular/core';
-// AÑADE ESTA IMPORTACIÓN:
-import { RouterModule } from '@angular/router'; 
-import { NotificationService } from './services/notification.service';
+import { Component, signal, OnInit, inject } from '@angular/core';
+import { RouterOutlet, RouterLink } from '@angular/router';
+import { YouTubePlayerModule } from '@angular/youtube-player';
+import { NotificationService } from './services/notification.service'; // Asegúrate de que la ruta sea correcta
 
 @Component({
   selector: 'app-root',
-  standalone: true, // Asegúrate de que sea standalone
-  imports: [RouterModule], // AÑADE RouterModule AQUÍ
+  standalone: true,
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    YouTubePlayerModule,
+  ],
   templateUrl: './app.html',
-  styleUrls: ['./app.css']
+  styleUrl: './app.css'
 })
 export class App implements OnInit {
-  constructor(private notificationService: NotificationService) {}
+  private notificationService = inject(NotificationService);
+  protected readonly title = signal('equipo-basket');
 
   ngOnInit() {
-    // Es importante que el servicio esté creado antes de llamar a estos métodos
+    // Solicitamos permiso y empezamos a escuchar mensajes
     this.notificationService.requestPermission();
     this.notificationService.listenForMessages();
   }
