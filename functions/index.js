@@ -3,33 +3,28 @@ const admin = require("firebase-admin");
 
 admin.initializeApp();
 
-// Esta función se dispara cada vez que se crea un documento en la colección "players"
 exports.notifyNewPlayer = onDocumentCreated("players/{playerId}", async (event) => {
-    const newPlayer = event.data.data(); // Datos del jugador recién creado
+    const newPlayer = event.data.data(); 
     const payload = {
         notification: {
             title: "¡Nuevo jugador fichado!",
-            body: `${newPlayer.nombre} ${newPlayer.apellidos} se ha unido al equipo.`,
-            icon: "https://tu-url-de-logo.png", // Usa una URL pública de tu logo
+            body: `${newPlayer.nombre} se ha unido al equipo.`,
         }
     };
 
     try {
-        // 1. Obtenemos todos los tokens guardados en la colección fcm_tokens
+        // Obtenemos los tokens de la colección que creamos en el servicio de Angular
         const tokensSnapshot = await admin.firestore().collection("fcm_tokens").get();
         const tokens = tokensSnapshot.docs.map(doc => doc.data().token);
 
         if (tokens.length > 0) {
-            // 2. Enviamos la notificación a todos los tokens encontrados
-            const response = await admin.messaging().sendEachForMulticast({
+            await admin.messaging().sendEachForMulticast({
                 tokens: tokens,
                 notification: payload.notification,
             });
-            console.log(`Notificaciones enviadas con éxito: ${response.successCount}`);
-        } else {
-            console.log("No hay tokens registrados para notificar.");
+            console.log("Notificaciones enviadas");
         }
     } catch (error) {
-        console.error("Error enviando notificaciones:", error);
+        console.error("Error:", error);
     }
 });

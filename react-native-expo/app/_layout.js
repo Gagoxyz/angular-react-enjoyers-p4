@@ -2,12 +2,20 @@ import { Stack, Link, useRouter, useSegments } from "expo-router";
 import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image, ImageBackground, StyleSheet, View, Pressable, Alert } from "react-native";
 import { useEffect } from "react";
+import * as Notifications from 'expo-notifications';
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import messaging from "@react-native-firebase/messaging";
 
 import { images } from "../assets/images/images";
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true, // Muestra la alerta visual
+    shouldPlaySound: true, // Reproduce sonido
+    shouldSetBadge: false,
+  }),
+});
 
 function CustomHeader() {
   const insets = useSafeAreaInsets();
