@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "angular-react-enjoyers-p2"
-  }
+    "default": "angular-react-enjoyers-p2",
+    "Default1": "angular-react-enjoyers-p2"
+  },
+  "targets": {},
+  "etags": {}
 }
