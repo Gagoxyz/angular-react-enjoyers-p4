@@ -90,12 +90,12 @@ export default function Layout() {
         remoteMessage.notification
       );
     });
-
+    
     /* ---- Mensajes en background ---- */
     messaging().setBackgroundMessageHandler(async (remoteMessage) => {
       console.log("Message handled in background:", remoteMessage);
     });
-
+    
     /* ---- Mensajes en foreground ---- */
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       Alert.alert(
